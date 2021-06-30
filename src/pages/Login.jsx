@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Row, Col, Card, Form, Input, Button, Space } from "antd";
 import { Link } from "react-router-dom";
-import axiosInstance from "../axios/axiosApi";
-import axios from "axios";
+import { connect } from "react-redux";
+import { login } from "../redux/auth/authActions";
 
 const layout = {
   labelCol: {
@@ -20,56 +20,20 @@ const tailLayout = {
   },
 };
 
-const Login = () => {
+const Login = (props) => {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
 
-  const data = {
-    username: username,
-    password: password,
-  };
-
-  console.log(data);
-
-  const getUsers = () => {
-    // GET API TOKEN
-    axiosInstance.post("api/token/", data).then(
-      (res) => {
-        console.log(res);
-        const token = res.data.access;
-        localStorage.setItem("access", token);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-
-    // GET USERS
-
-    axiosInstance.get("account/users/").then(
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-
-    axiosInstance.get("account/api/NFT/").then(
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+  const onPost = () => {
+    props.loginPost(username, password);
+    console.log(props.isLogin);
   };
 
   return (
     <Row align="middle">
       <Col span={8} offset={8}>
         <Card title="Авторизация">
-          <Form {...layout} onFinish={getUsers}>
+          <Form {...layout} onFinish={onPost}>
             <Form.Item
               label="Username"
               name="username"
@@ -120,4 +84,16 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapStateToProps = (state) => ({
+  isLogin: state.auth.isLogin,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginPost: (username, password) => {
+      dispatch(login(username, password));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

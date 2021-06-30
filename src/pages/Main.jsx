@@ -1,17 +1,50 @@
-import React from "react";
-import { Layout } from "antd";
-import Header from "../components/Header";
-import SideMenu from "../components/SideMenu";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Layout, Button, Spin, Row } from "antd";
+import { connect } from "react-redux";
+import { getDataNft } from "../redux";
+import CardContent from "../components/CardContent";
+import styles from "./Main.module.css";
 
-const Main = () => {
+function Main({ nft, getData }) {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getData();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  console.log(nft);
+
   return (
     <Layout>
-      <Header />
-      <Layout>
-        <SideMenu />
-      </Layout>
+      <Button className={styles.addButton}>
+        <Link to="/addNft">Добавить</Link>
+      </Button>
+
+      <Row gutter={16}>
+        {nft.isLoading ? (
+          <Spin />
+        ) : (
+          nft.data.map((item) => <CardContent key={item.id} props={item} />)
+        )}
+      </Row>
     </Layout>
   );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    nft: state.nft,
+  };
 };
 
-export default Main;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getData: () => {
+      dispatch(getDataNft());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

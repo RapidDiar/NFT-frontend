@@ -3,7 +3,7 @@ import PrivateRoute from "./PrivateRoute";
 
 const mapStateToProps = (state, props) => {
   return {
-    showSecret: true,
+    isLogin: state.auth.isLogin,
   };
 };
 

@@ -1,0 +1,16 @@
+.header {
+  padding: 0;
+}
+
+.mainSection {
+  height: 93vh;
+}
+
+.sider {
+  padding: 0;
+  margin: 0;
+}
+
+.contentLayout {
+  padding: 24px;
+}
